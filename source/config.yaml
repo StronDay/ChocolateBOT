@@ -1,0 +1,14 @@
+time_interval:
+- "hours": 0
+- "minutes": 2
+- "seconds": 0
+
+trusted_time_interval:
+- "hours": 0
+- "minutes": 1
+- "seconds": 0
+
+waiting_time_interval:
+- "hours": 4
+- "minutes": 0
+- "seconds": 0
