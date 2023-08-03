@@ -6,12 +6,10 @@ from handlers import client, admin, general, moderator
 from data_base import sql_worker
 from services import script_worker
 
-
 async def on_startup(_):
-    print("Бот вышел в онлайн")
+    print("[INFO] Бот вышел в онлайн")
 
 sql_worker.sql_start()
-
 
 general.register_handlers_client(dp)
 admin.register_handlers_client(dp)
