@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher.filters import Text
 from create_bot import bot
-from keyboards import keyboard_admin_default, keyboard_admin_admin, get_buttons, get_all_button_info_inline, get_buttons_pallet, malling_keyboard
+from keyboards import keyboard_admin_default, keyboard_admin_admin, get_buttons, get_all_button_info_inline, get_buttons_pallet, malling_keyboard, ad_moderator_keyboard
 from keyboards import cd_button_action, cd_button_add
 from services import yaml_worker
 from filters import button_filter
@@ -30,6 +30,10 @@ class FSMAdminLocation(StatesGroup):
 #commands = "/Панель_администратора"
 async def command_admin_panel(message : types.Message):
     await bot.send_message(message.from_user.id, "Чего изволите сегодня?", reply_markup = keyboard_admin_admin)
+
+#commands = "/Панель_модератора"
+async def command_moder_panel(message : types.Message):
+    await bot.send_message(message.from_user.id, "Вы в режиме вашего работника", reply_markup = ad_moderator_keyboard)
 
 #commands = "/Обычная_панель"
 async def command_default_panel(message : types.Message):
@@ -160,7 +164,7 @@ async def cancel_state(call : types.CallbackQuery, state : FSMContext):
     if current_state is None:
         return
     
-    await bot.send_message(call.from_user.id, "Вы отменили процесс", reply_markup = keyboard_admin_admin)
+    await bot.send_message(call.from_user.id, "Вы отменили процесс")
     await state.finish()
 
 async def info_button(call : types.CallbackQuery, callback_data: dict):
@@ -170,6 +174,7 @@ def register_handlers_client(dp : Dispatcher):
     dp.register_callback_query_handler(info_button, button_filter.isAdmin(), cd_button_action.filter(action = "info"))
 
     dp.register_message_handler(command_admin_panel, button_filter.isAdmin(), commands = "Панель_администратора")
+    dp.register_message_handler(command_moder_panel, button_filter.isAdmin(), commands = "Панель_модератора")
     dp.register_message_handler(command_default_panel, button_filter.isAdmin(), commands = "Обычная_панель")
     dp.register_message_handler(command_all_info_button, button_filter.isAdmin(), commands = "Инфа_все_кнопки")
     dp.register_message_handler(command_mailing_settings, button_filter.isAdmin(), commands = "Управление_рассылкой")
@@ -194,4 +199,4 @@ def register_handlers_client(dp : Dispatcher):
     dp.register_callback_query_handler(choice_button_location_change, button_filter.isAdmin(), cd_button_action.filter(action = "change_location"), state = FSMAdminLocation.name)
     dp.register_message_handler(choice_new_button_location, button_filter.isAdmin(), state=FSMAdminLocation.new_name)
 
-    dp.register_callback_query_handler(cancel_state, button_filter.isAdmin(), Text(equals="Отменить"), state="*")
+    dp.register_callback_query_handler(cancel_state, button_filter.isModer(), Text(equals="Отменить"), state="*")

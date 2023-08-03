@@ -23,7 +23,7 @@ async def hobby_button(message : types.Message):
 #записаться
 async def insert_visitor(call : types.CallbackQuery, callback_data: dict):
     if await sql_worker.is_Trusted(call.from_user.id):
-        period = await sql_worker.is_final()
+        period = await sql_worker.is_final(call.from_user.id)
         if period == False:
             await sql_worker.insert_visitor(call.from_user.id, yaml_worker.get_location(callback_data.get("button")))
             await bot.send_message(call.from_user.id, "Вы успешно записались")
@@ -47,7 +47,7 @@ async def get_count_visitor(call : types.CallbackQuery, callback_data: dict):
 
 #Информация о текущей сессии
 async def get_info_session(message : types.Message):
-    period = await sql_worker.is_final()
+    period = await sql_worker.is_final(message.from_user.id)
 
     if period == False:
         await bot.send_message(message.from_user.id, "На данный момент\nначатых тренировок нет")
@@ -57,7 +57,7 @@ async def get_info_session(message : types.Message):
 
 #Завершить сессию
 async def complete_traning(call : types.CallbackQuery):
-    period = await sql_worker.is_final()
+    period = await sql_worker.is_final(call.from_user.id)
     if period == False:
         await bot.send_message(call.from_user.id, f"Тренировка уже окончена")
     else:
@@ -78,10 +78,6 @@ async def extend_tranning_time(call : types.CallbackQuery,  callback_data: dict,
 
     await bot.send_message(call.from_user.id, "Время продлено")
     await state.finish()
-
-#dp.register_callback_query_handler(extend_tranning_time_no, lambda query: query.data.split(",")[1] == "Продлить_кнопка")
-#async def extend_tranning_time_no(call : types.CallbackQuery):
-#    await bot.send_message(call.from_user.id, "Время не может быть продлено")
 
 def register_handlers_client(dp : Dispatcher):
     dp.register_callback_query_handler(extend_tranning, lambda query: query.data == "Продлить", state=None)

@@ -1,4 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup ,InlineKeyboardButton
+from keyboards import button_register, button_add_granny
 from services import yaml_worker
 from aiogram.utils.callback_data import CallbackData
 
@@ -6,9 +7,9 @@ cd_button_action = CallbackData("action_px", "button", "action")
 cd_button_add = CallbackData("add_px", "button", "i", "j", "action")
 
 button_admin = KeyboardButton("/Панель_администратора")
+button_moder = KeyboardButton("/Панель_модератора")
 button_default = KeyboardButton("/Обычная_панель")
 button_all_info_button = KeyboardButton("/Инфа_все_кнопки")
-button_add_visitor =  KeyboardButton("/Зарегистрировать_пользователя")
 button_sql = KeyboardButton("/Управление_рассылкой")
 button_info_session = KeyboardButton("Инфо о текущей сессии")
 
@@ -29,7 +30,9 @@ malling_keyboard.row(button_admin)
 
 def keyboard_admin_default():
     keyboard =  yaml_worker.get_hobby_buttons_replay().row(button_info_session)
-    return keyboard.row(button_admin)
+    keyboard.row(button_moder)
+    keyboard.row(button_admin)
+    return keyboard
 
 def get_buttons(action):
     return yaml_worker.get_hobby_buttons_inline(action).add(button_cancel)
@@ -45,6 +48,10 @@ keyboard_admin_admin = ReplyKeyboardMarkup(resize_keyboard = True)
 keyboard_admin_admin.row(button_add, button_delete)
 keyboard_admin_admin.row(button_change_name, button_change_location)
 keyboard_admin_admin.row(button_all_info_button)
-keyboard_admin_admin.row(button_add_visitor)
 keyboard_admin_admin.row(button_sql)
 keyboard_admin_admin.row(button_default)
+
+ad_moderator_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+ad_moderator_keyboard.row(button_register)
+ad_moderator_keyboard.row(button_add_granny)
+ad_moderator_keyboard.row(button_default)

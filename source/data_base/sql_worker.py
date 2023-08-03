@@ -33,19 +33,19 @@ def sql_start():
     data_base.execute("CREATE TABLE IF NOT EXISTS visitors_stat(id_user PRIMARY KEY)")
     data_base.commit()
 
-#Получение из бд время окончания тренировки пользователя 
-async def get_finish_time(user_id):
-    pass
+# #Получение из бд время окончания тренировки пользователя 
+# async def get_finish_time(user_id):
+#     pass
 
-#Получение интервала времени из yaml файла
-def get_time_interval(yaml_interval):
-    pass
+# #Получение интервала времени из yaml файла
+# def get_time_interval(yaml_interval):
+#     pass
 
-#Получение строки содержащей формат времени (Час|Минута|Секунда)
-async def get_str_time(full_time):
-    pass
+# #Получение строки содержащей формат времени (Час|Минута|Секунда)
+# async def get_str_time(full_time):
+#     pass
 
-def get_waiting_keyboard():
+async def get_waiting_keyboard_sql():
     current_time = datetime.datetime.now()
 
     keyboard = InlineKeyboardMarkup()
@@ -127,10 +127,10 @@ async def is_Trusted(id_user):
     else:
         return True
     
-async def is_final():
+async def is_final(id_user):
     current_time = datetime.datetime.now()
 
-    cursor.execute(f"SELECT * FROM visitors WHERE time_finish > '{current_time}' ORDER BY id DESC LIMIT 1;")
+    cursor.execute(f"SELECT * FROM visitors WHERE id_user == '{id_user}' AND time_finish > '{current_time}' ORDER BY id DESC LIMIT 1;")
     request = cursor.fetchone()
 
     if request != None:
@@ -194,13 +194,14 @@ async def check_remaining_time():
     if users != None:
         for user in users:
             user_id = user[0]
+            if user_id != "777":
 
-            period = datetime.datetime.strptime(user[1], '%Y-%m-%d %H:%M:%S.%f') - current_time
-            hours = period.seconds // 3600
-            minutes = (period.seconds % 3600) // 60
-            seconds = period.seconds % 60
+                period = datetime.datetime.strptime(user[1], '%Y-%m-%d %H:%M:%S.%f') - current_time
+                hours = period.seconds // 3600
+                minutes = (period.seconds % 3600) // 60
+                seconds = period.seconds % 60
 
-            await bot.send_message(user_id, f"До конца текущей тренировки осталось\nЧасов: {hours} | Минут: {minutes} | Секунд: {seconds}", reply_markup = training_choise_keyboard)
+                await bot.send_message(user_id, f"До конца текущей тренировки осталось\nЧасов: {hours} | Минут: {minutes} | Секунд: {seconds}", reply_markup = training_choise_keyboard)
 
 
 def sql_close():
