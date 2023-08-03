@@ -9,7 +9,7 @@ cd_amount_vis = CallbackData("amount_px", "button")
 cd_insert_vis = CallbackData("insert_px", "button")
 
 
-button_info_session = KeyboardButton("Инфо о текущей сессии")
+button_info_session = KeyboardButton("Инфо о текущей тренировке")
 
 button_extend_inline = InlineKeyboardButton("Продлить", callback_data="Продлить")
 button_complete_inline = InlineKeyboardButton("Завершить", callback_data="Завершить")

@@ -6,6 +6,7 @@ from keyboards import get_buttons
 from keyboards import cd_accept, cd_code, cd_location, cd_button_action
 from data_base import sql_worker
 from services import yaml_worker
+from services import get_text
 from filters import button_filter
 
 class FSMModer(StatesGroup):
@@ -18,7 +19,7 @@ async def registration_visitors(message : types.Message):
 #Добавить пользователя(бабулю), который не хочет или не может проходить регистрацию 1
 async def add_granny(message : types.Message):
     await FSMModer.location.set()
-    await bot.send_message(message.from_user.id, f"Список пользователей на подтверждение:", reply_markup = get_buttons("add granny"))
+    await bot.send_message(message.from_user.id, f"Выберите локацию в которую\nхотите добавить бабулю:", reply_markup = get_buttons("add granny"))
 
 #Добавить пользователя(бабулю), который не хочет или не может проходить регистрацию 2
 async def add_granny_choise_location(call : types.CallbackQuery, callback_data: dict, state : FSMModer):
@@ -30,10 +31,10 @@ async def add_granny_choise_location(call : types.CallbackQuery, callback_data: 
     await state.finish()
 
 async def insert_wiating_user(call : types.CallbackQuery, callback_data: dict):
-    if await sql_worker.is_final(call.from_user.id) == False:
+    if await sql_worker.is_final(callback_data.get("id_user")) == False:
         await sql_worker.insert_visitor(callback_data.get("id_user"), callback_data.get("location"))
         await bot.send_message(call.from_user.id, "Пользователь добавлен")
-        await bot.send_message(callback_data.get("id_user"), f"Администратор вас добавил в {yaml_worker.get_button_name(callback_data.get('location'))}")
+        await bot.send_message(callback_data.get("id_user"), get_text("add_into_location_text").format(yaml_worker.get_button_name(callback_data.get('location'))))
     else:
         await bot.send_message(call.from_user.id, "Пользователь уже был добавлен")
 

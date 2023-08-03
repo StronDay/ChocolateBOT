@@ -1,2 +1,2 @@
-from services import yaml_worker
+from services.yaml_worker import get_text
 from services.message_worker import MessageWorker

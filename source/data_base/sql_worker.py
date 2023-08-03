@@ -1,7 +1,8 @@
 import sqlite3 as sql
 import datetime
-from create_bot import bot
+import tracemalloc
 
+from create_bot import bot
 from datetime import timedelta
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 from services import yaml_worker
@@ -188,21 +189,24 @@ async def complete_time(id_user):
 async def check_remaining_time():
     current_time = datetime.datetime.now()
 
-    cursor.execute(f"SELECT id_user, time_finish FROM visitors WHERE time_finish > '{current_time}' AND time_finish - '{current_time}' <= 60")
+    cursor.execute(f"SELECT id_user, time_finish FROM visitors WHERE time_finish > '{current_time}'")
     users = cursor.fetchall()
-
+    
     if users != None:
         for user in users:
-            user_id = user[0]
-            if user_id != "777":
+            if user[0] != "777":
+                time_finish = datetime.datetime.strptime(user[1], '%Y-%m-%d %H:%M:%S.%f')
+                notify_time = time_finish - datetime.timedelta(minutes=3)
+                current_time = datetime.datetime.now()
 
-                period = datetime.datetime.strptime(user[1], '%Y-%m-%d %H:%M:%S.%f') - current_time
-                hours = period.seconds // 3600
-                minutes = (period.seconds % 3600) // 60
-                seconds = period.seconds % 60
+                if current_time >= notify_time and current_time < datetime.datetime.strptime(user[1], '%Y-%m-%d %H:%M:%S.%f'):
 
-                await bot.send_message(user_id, f"До конца текущей тренировки осталось\nЧасов: {hours} | Минут: {minutes} | Секунд: {seconds}", reply_markup = training_choise_keyboard)
+                    period = datetime.datetime.strptime(user[1], '%Y-%m-%d %H:%M:%S.%f') - current_time
+                    hours = period.seconds // 3600
+                    minutes = (period.seconds % 3600) // 60
+                    seconds = period.seconds % 60
 
+                    await bot.send_message(user[0], f"До конца текущей тренировки осталось\nЧасов: {hours} | Минут: {minutes} | Секунд: {seconds}", reply_markup = training_choise_keyboard)
 
 def sql_close():
     data_base.close()

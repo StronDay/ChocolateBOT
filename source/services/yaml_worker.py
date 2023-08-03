@@ -1,4 +1,5 @@
 import datetime
+import os 
 
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton
 from keyboards import cd_button_action, cd_button_add
@@ -10,14 +11,28 @@ class FindMode(Enum):
     NAME = 1
     LOCATIONS = 2
 
-def yaml_full_load(path_to_yaml = "/home/maksim/MainFolder/Projects/ChocolateBOT_py/config.yaml"):
+current_directory = os.path.dirname(os.path.abspath(__file__))
+current_dir = os.getcwd()
+
+path_to_buttons_cfg = "../buttons_cfg.yaml"
+absolute_path_to_buttons_cfg = os.path.join(current_dir, path_to_buttons_cfg)
+
+puth_to_text = "text.yaml"
+absolute_path_to_text = os.path.join(current_dir, puth_to_text)
+
+path_to_time_interval = "time_interval.yaml"
+absolute_path_to_time_interval = os.path.join(current_dir, path_to_time_interval)
+
+
+
+def yaml_full_load(path_to_yaml = absolute_path_to_buttons_cfg):
     with open(path_to_yaml, 'r') as file:
         data = full_load(file)
 
     return data
 
 def yaml_push(data):
-    with open('/home/maksim/MainFolder/Projects/ChocolateBOT_py/config.yaml', 'w', encoding = "utf-8") as file:
+    with open(absolute_path_to_buttons_cfg, 'w', encoding = "utf-8") as file:
         safe_dump(data, file, allow_unicode=True) 
 
 def get_hobby_buttons_replay():
@@ -181,10 +196,14 @@ def get_button_name(location):
     return find_hobby_button(location, FindMode.LOCATIONS)["name"]
 
 def get_time_interval(name_var):
-    data = yaml_full_load("/home/maksim/MainFolder/Projects/ChocolateBOT_py/source/config.yaml")
+    data = yaml_full_load(absolute_path_to_time_interval)
 
     data_hours = data[name_var][0]["hours"]
     data_minutes = data[name_var][1]["minutes"]
     data_seconds = data[name_var][2]["seconds"]
 
     return datetime.timedelta(hours=data_hours, minutes=data_minutes, seconds=data_seconds)
+
+def get_text(text_name):
+    data = yaml_full_load(absolute_path_to_text)
+    return data[text_name]
