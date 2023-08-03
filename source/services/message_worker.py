@@ -1,6 +1,7 @@
 class MessageWorker():
+
     def __init__(self) -> None:
-        pass
+        self.message = None
 
     def save_message(self, message):
         self.message = message

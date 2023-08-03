@@ -1,11 +1,9 @@
 from aiogram import types, Dispatcher
-from create_bot import dp, bot
+from create_bot import bot
 
 from keyboards import keyboard_admin_default
 from keyboards import get_client_keyboard
 from keyboards import moderator_keyboard
-from handlers import admin
-from handlers import client
 
 import os
 from dotenv import load_dotenv

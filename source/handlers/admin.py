@@ -4,6 +4,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher.filters import Text
 from create_bot import bot
 from keyboards import keyboard_admin_default, keyboard_admin_admin, get_buttons, get_all_button_info_inline, get_buttons_pallet, malling_keyboard
+from keyboards import cd_button_action, cd_button_add
 from services import yaml_worker
 from filters import button_filter
 from data_base import sql_worker
@@ -70,9 +71,9 @@ async def command_button_name_change(message : types.Message):
     await bot.send_message(message.from_user.id, "Название какой кнопки вы хотите изменить?", reply_markup = get_buttons("change"))
 
 #commands = "/Изменить_название" 2
-async def choice_button_change(call : types.CallbackQuery, state : FSMContext):
+async def choice_button_change(call : types.CallbackQuery, callback_data: dict, state : FSMContext):
     async with state.proxy() as data:
-        data["name"] = call.data.split(",")[0]
+        data["name"] = callback_data.get("button")
 
     await FSMAdmin.next()
     await bot.send_message(call.from_user.id, "Напишите нове название кнопки:")
@@ -94,9 +95,9 @@ async def command_button_location_change(message : types.Message):
     await bot.send_message(message.from_user.id, "Название локации для какой кнопки вы хотите изменить?", reply_markup = get_buttons("change_location"))
 
 #commands = "/Изменить_локацию" 2
-async def choice_button_location_change(call : types.CallbackQuery, state : FSMContext):
+async def choice_button_location_change(call : types.CallbackQuery, callback_data: dict, state : FSMContext):
     async with state.proxy() as data:
-        data["name"] = call.data.split(",")[0]
+        data["name"] = callback_data.get("button")
 
     await FSMAdminLocation.next()
     await bot.send_message(call.from_user.id, f"Напишите нове название локации для кнопки '{data['name']}':")
@@ -118,8 +119,8 @@ async def command_button_delete(message : types.Message):
     await bot.send_message(message.from_user.id, "Какую кнопку вы хотите удалить?", reply_markup = get_buttons("delete"))
 
 #commands = "/Удалить_кнопку" 2 final
-async def choice_button_delete(call : types.CallbackQuery,  state : FSMContext):
-    yaml_worker.delete_hobby_button(call.data.split(',')[0])
+async def choice_button_delete(call : types.CallbackQuery, callback_data: dict,  state : FSMContext):
+    yaml_worker.delete_hobby_button(callback_data.get("button"))
 
     await bot.send_message(call.from_user.id, "Кнопка была удалена")
     await state.finish()
@@ -146,9 +147,9 @@ async def choise_location_button_add(message : types.Message, state : FSMContext
     await bot.send_message(message.from_user.id, "Выберете рассположение для новой кнопки:", reply_markup=get_buttons_pallet("add"))
 
 #commands = "/Добавить_кнопку" 4 finish
-async def button_add(call : types.CallbackQuery, state : FSMContext):
+async def button_add(call : types.CallbackQuery, callback_data: dict, state : FSMContext):
     async with state.proxy() as data:
-        yaml_worker.add_hobby_button({"name": data["name"], "location": data["location"]}, call.data.split(',')[0], call.data.split(',')[1])
+        yaml_worker.add_hobby_button({"name": data["name"], "location": data["location"]}, callback_data.get("i"), callback_data.get("j"))
 
     await bot.send_message(call.from_user.id, "Кнопка успешно добавлена")
     await state.finish()
@@ -162,7 +163,12 @@ async def cancel_state(call : types.CallbackQuery, state : FSMContext):
     await bot.send_message(call.from_user.id, "Вы отменили процесс", reply_markup = keyboard_admin_admin)
     await state.finish()
 
+async def info_button(call : types.CallbackQuery, callback_data: dict):
+    await bot.send_message(call.from_user.id, f"{callback_data.get('button')}")
+
 def register_handlers_client(dp : Dispatcher):
+    dp.register_callback_query_handler(info_button, button_filter.isAdmin(), cd_button_action.filter(action = "info"))
+
     dp.register_message_handler(command_admin_panel, button_filter.isAdmin(), commands = "Панель_администратора")
     dp.register_message_handler(command_default_panel, button_filter.isAdmin(), commands = "Обычная_панель")
     dp.register_message_handler(command_all_info_button, button_filter.isAdmin(), commands = "Инфа_все_кнопки")
@@ -173,20 +179,19 @@ def register_handlers_client(dp : Dispatcher):
     dp.register_message_handler(command_start_malling_message, button_filter.isAdmin(), state=FSMMalling.message)
 
     dp.register_message_handler(command_button_delete, button_filter.isAdmin(), commands = "Удалить_кнопку", state=None)
-    dp.register_callback_query_handler(choice_button_delete, button_filter.isAdmin(), button_filter.DeleteButtonFilter(), state=FSMAdmin.name)
+    dp.register_callback_query_handler(choice_button_delete, button_filter.isAdmin(), cd_button_action.filter(action = "delete"), state=FSMAdmin.name)
 
     dp.register_message_handler(command_button_add, button_filter.isAdmin(), commands = "Добавить_кнопку", state=None)
     dp.register_message_handler(choise_name_button_add, button_filter.isAdmin(), state=FSMAdminAdd.name)
     dp.register_message_handler(choise_location_button_add, button_filter.isAdmin(), state=FSMAdminAdd.location)
-    dp.register_callback_query_handler(button_add, button_filter.isAdmin(), button_filter.AddButtonFilter(), state=FSMAdminAdd.simple)
+    dp.register_callback_query_handler(button_add, button_filter.isAdmin(), cd_button_add.filter(action = "add"), state=FSMAdminAdd.simple)
 
     dp.register_message_handler(command_button_name_change, button_filter.isAdmin(), commands = "Изменить_название", state=None)
-    dp.register_callback_query_handler(choice_button_change, button_filter.isAdmin(), button_filter.ChangeButtonFilter(), state = FSMAdmin.name)
+    dp.register_callback_query_handler(choice_button_change, button_filter.isAdmin(), cd_button_action.filter(action = "change"), state = FSMAdmin.name)
     dp.register_message_handler(choice_new_button_name, button_filter.isAdmin(), state=FSMAdmin.new_name)
 
     dp.register_message_handler(command_button_location_change, button_filter.isAdmin(), commands = "Изменить_локацию", state=None)
-    dp.register_callback_query_handler(choice_button_location_change, button_filter.isAdmin(), button_filter.ChangeButtonLocationFilter(), state = FSMAdminLocation.name)
+    dp.register_callback_query_handler(choice_button_location_change, button_filter.isAdmin(), cd_button_action.filter(action = "change_location"), state = FSMAdminLocation.name)
     dp.register_message_handler(choice_new_button_location, button_filter.isAdmin(), state=FSMAdminLocation.new_name)
 
-    dp.register_callback_query_handler(cancel_state, button_filter.isAdmin(), Text(equals="Отменить,Отменить"), state="*")
-    dp.register_callback_query_handler(cancel_state, button_filter.isAdmin(), Text(equals="Отменить,Отменить,Отменить"), state="*")
+    dp.register_callback_query_handler(cancel_state, button_filter.isAdmin(), Text(equals="Отменить"), state="*")

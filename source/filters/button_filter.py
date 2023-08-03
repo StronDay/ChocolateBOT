@@ -6,33 +6,18 @@ from services import yaml_worker
 
 load_dotenv()
 
-class DeleteButtonFilter(Filter):
-
-    key = 'delete_filter'
-
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.data.split(",")[1] == "delete"
+# class Filter_values(Filter):
     
-class ChangeButtonFilter(Filter):
+#     key="filter_values"
 
-    key = 'change_filter'
+#     def __init__(self, value, position) -> None:
+#         super().__init__()
 
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.data.split(",")[1] == "change"
+#         self.value = value
+#         self.position = position
 
-class ChangeButtonLocationFilter(Filter):
-
-    key = 'change_location_filter'
-
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.data.split(",")[1] == "change_location"
-    
-class AddButtonFilter(Filter):
-
-    key = 'add_filter'
-
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.data.split(",")[2] == "add"
+#     async def check(self, call: types.CallbackQuery) -> bool:
+#         return call.data.split(",")[self.position] == self.value
     
 class isAdmin(Filter):
 
@@ -54,24 +39,3 @@ class isHobbyButton(Filter):
 
     async def check(self, message : types.Message) -> bool:
         return yaml_worker.is_hobby_button(message.text)
-    
-class isInsert(Filter):
-
-    key = 'is_insert'
-
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.data.split(",")[1] == "Записаться"
-    
-class isAmount(Filter):
-
-    key = 'is_amount'
-
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.data.split(",")[1] == "Узнать"
-    
-class isAccept(Filter):
-
-    key = 'is_accept'
-
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.data.split(",")[2] == "Принять"

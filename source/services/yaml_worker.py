@@ -1,6 +1,7 @@
 import datetime
 
 from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton
+from keyboards import cd_button_action, cd_button_add
 from yaml import full_load
 from yaml import safe_dump
 from enum import Enum
@@ -40,8 +41,8 @@ def get_hobby_location_inline(action: str):
 
     for row in data["hobby_button"]:
         for button in row: 
-            inline_keyboard.row(InlineKeyboardButton(button["name"], callback_data = button["name"] + "," + action), 
-                                InlineKeyboardButton(button["location"], callback_data = button["location"] + "," + action))
+            inline_keyboard.row(InlineKeyboardButton(button["name"], callback_data = cd_button_action.new(button = button["name"], action = action)),
+                                InlineKeyboardButton(button["location"], callback_data = cd_button_action.new(button = button["location"], action = action)))
 
     return inline_keyboard
 
@@ -50,14 +51,14 @@ def get_hobby_buttons_pallet(action):
     data = yaml_full_load()
 
     inline_keyboard = InlineKeyboardMarkup()
-    button_new_row = InlineKeyboardButton("+", callback_data = "new,new," + action)
+    button_new_row = InlineKeyboardButton("+", callback_data = cd_button_add.new(button = "new", i = "new", j = "new", action = action))
 
     arr = []
     for i, row in enumerate(data["hobby_button"]):
         for j, button in enumerate(row):
-            arr.append(InlineKeyboardButton("+", callback_data = str(i) + "," + str(j) + "," + action)) 
-            arr.append(InlineKeyboardButton(button["name"], callback_data = button["name"] + "," + "none"))
-        arr.append(InlineKeyboardButton("+", callback_data = str(i) + "," + str(j + 1) + "," + action))
+            arr.append(InlineKeyboardButton("+", callback_data = cd_button_add.new(button = button["name"], i = str(i), j = str(j), action = action)))
+            arr.append(InlineKeyboardButton(button["name"], callback_data = cd_button_add.new(button = button["name"], j = "none", i = "none", action = "none")))
+        arr.append(InlineKeyboardButton("+", callback_data = cd_button_add.new(button = button["name"], i = str(i), j = str(j + 1), action = action)))
         inline_keyboard.row(*arr)
         arr.clear()
 
@@ -71,7 +72,7 @@ def get_hobby_buttons_inline(action: str):
 
     for row in data["hobby_button"]:
         for button in row: 
-            inline_keyboard.add(InlineKeyboardButton(button["name"], callback_data = button["name"] + "," + action))
+            inline_keyboard.add(InlineKeyboardButton(button["name"], callback_data = cd_button_action.new(button = button["name"], action = action)))
 
     return inline_keyboard
 
