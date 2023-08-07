@@ -6,19 +6,6 @@ from services import yaml_worker
 
 load_dotenv()
 
-# class Filter_values(Filter):
-    
-#     key="filter_values"
-
-#     def __init__(self, value, position) -> None:
-#         super().__init__()
-
-#         self.value = value
-#         self.position = position
-
-#     async def check(self, call: types.CallbackQuery) -> bool:
-#         return call.data.split(",")[self.position] == self.value
-
 def is_valid_id(user_id, name_env_vr) -> bool:
     id_admin_str = os.getenv(name_env_vr)
     id_admin_list = [int(id) for id in id_admin_str.split(",")]

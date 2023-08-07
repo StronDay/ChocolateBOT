@@ -88,4 +88,4 @@ def register_handlers_client(dp : Dispatcher):
     dp.register_callback_query_handler(insert_visitor, cd_insert_vis.filter())
     dp.register_callback_query_handler(get_count_visitor, cd_amount_vis.filter())
     dp.register_message_handler(hobby_button, button_filter.isHobbyButton())
-    dp.register_message_handler(get_info_session, Text(equals="инфо о текущей тренировке", ignore_case=True))
+    dp.register_message_handler(get_info_session, Text(equals="узнать о текущей тренировке", ignore_case=True))

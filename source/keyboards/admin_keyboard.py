@@ -11,7 +11,7 @@ button_moder = KeyboardButton("/Панель_модератора")
 button_default = KeyboardButton("/Обычная_панель")
 button_all_info_button = KeyboardButton("/Инфа_все_кнопки")
 button_sql = KeyboardButton("/Управление_рассылкой")
-button_info_session = KeyboardButton("Инфо о текущей сессии")
+button_info_session = KeyboardButton("Узнать о текущей тренировке")
 
 button_change_name = KeyboardButton("/Изменить_название")
 button_change_location = KeyboardButton("/Изменить_локацию")
