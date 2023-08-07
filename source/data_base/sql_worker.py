@@ -78,7 +78,7 @@ async def get_waiting_keyboard_sql():
     return keyboard
 
 async def refresh_visitors_stat():
-    cursor.execute("INSERT OR IGNORE INTO visitors_stat SELECT DISTINCT id_user FROM visitors")
+    cursor.execute("INSERT OR IGNORE INTO visitors_stat SELECT DISTINCT id_user FROM visitors WHERE id_user != 777")
     data_base.commit()
 
 async def get_all_state_visitors_id():
