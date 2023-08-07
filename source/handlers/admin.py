@@ -90,6 +90,13 @@ async def choice_new_button_name(message : types.Message, state : FSMContext):
     async with state.proxy() as data:
         yaml_worker.change_hobby_button(data["name"], data["new_name"], find_mode=yaml_worker.FindMode.NAME)
 
+    await sql_worker.refresh_visitors_stat()
+    visitors = await sql_worker.get_all_state_visitors_id()
+    for visitor in visitors:
+        if button_filter.is_admin(visitor) and button_filter.is_moder(visitor):
+            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало")
+
+
     await bot.send_message(message.from_user.id, "Название кнопки было успешно изменено")
     await state.finish()
 
@@ -126,6 +133,12 @@ async def command_button_delete(message : types.Message):
 async def choice_button_delete(call : types.CallbackQuery, callback_data: dict,  state : FSMContext):
     yaml_worker.delete_hobby_button(callback_data.get("button"))
 
+    await sql_worker.refresh_visitors_stat()
+    visitors = await sql_worker.get_all_state_visitors_id()
+    for visitor in visitors:
+        if button_filter.is_admin(visitor) and button_filter.is_moder(visitor):
+            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало")
+
     await bot.send_message(call.from_user.id, "Кнопка была удалена")
     await state.finish()
 
@@ -154,6 +167,13 @@ async def choise_location_button_add(message : types.Message, state : FSMContext
 async def button_add(call : types.CallbackQuery, callback_data: dict, state : FSMContext):
     async with state.proxy() as data:
         yaml_worker.add_hobby_button({"name": data["name"], "location": data["location"]}, callback_data.get("i"), callback_data.get("j"))
+
+    await sql_worker.refresh_visitors_stat()
+    visitors = await sql_worker.get_all_state_visitors_id()
+    for visitor in visitors:
+        if button_filter.is_admin(visitor) and button_filter.is_moder(visitor):
+            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало")
+
 
     await bot.send_message(call.from_user.id, "Кнопка успешно добавлена")
     await state.finish()
