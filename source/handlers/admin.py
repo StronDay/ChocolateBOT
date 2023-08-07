@@ -93,7 +93,7 @@ async def choice_new_button_name(message : types.Message, state : FSMContext):
     await sql_worker.refresh_visitors_stat()
     visitors = await sql_worker.get_all_state_visitors_id()
     for visitor in visitors:
-        if not (button_filter.is_admin(visitor) and button_filter.is_moder(visitor)):
+        if not (button_filter.is_admin(visitor) or button_filter.is_moder(visitor)):
             await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало", reply_markup=get_client_keyboard())
 
 
@@ -136,7 +136,7 @@ async def choice_button_delete(call : types.CallbackQuery, callback_data: dict, 
     await sql_worker.refresh_visitors_stat()
     visitors = await sql_worker.get_all_state_visitors_id()
     for visitor in visitors:
-        if not (button_filter.is_admin(visitor) and button_filter.is_moder(visitor)):
+        if not (button_filter.is_admin(visitor) or button_filter.is_moder(visitor)):
             await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало", reply_markup=get_client_keyboard())
 
     await bot.send_message(call.from_user.id, "Кнопка была удалена")
@@ -171,7 +171,7 @@ async def button_add(call : types.CallbackQuery, callback_data: dict, state : FS
     await sql_worker.refresh_visitors_stat()
     visitors = await sql_worker.get_all_state_visitors_id()
     for visitor in visitors:
-        if not (button_filter.is_admin(visitor) and button_filter.is_moder(visitor)):
+        if not (button_filter.is_admin(visitor) or button_filter.is_moder(visitor)):
             await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало", reply_markup=get_client_keyboard())
 
 
