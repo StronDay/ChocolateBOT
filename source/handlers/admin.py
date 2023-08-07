@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher.filters import Text
 from create_bot import bot
 from keyboards import keyboard_admin_default, keyboard_admin_admin, get_buttons, get_all_button_info_inline, get_buttons_pallet, malling_keyboard, ad_moderator_keyboard
-from keyboards import cd_button_action, cd_button_add
+from keyboards import cd_button_action, cd_button_add, get_client_keyboard
 from services import yaml_worker
 from filters import button_filter
 from data_base import sql_worker
@@ -94,7 +94,7 @@ async def choice_new_button_name(message : types.Message, state : FSMContext):
     visitors = await sql_worker.get_all_state_visitors_id()
     for visitor in visitors:
         if button_filter.is_admin(visitor) and button_filter.is_moder(visitor):
-            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало")
+            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало", reply_markup=get_client_keyboard())
 
 
     await bot.send_message(message.from_user.id, "Название кнопки было успешно изменено")
@@ -137,7 +137,7 @@ async def choice_button_delete(call : types.CallbackQuery, callback_data: dict, 
     visitors = await sql_worker.get_all_state_visitors_id()
     for visitor in visitors:
         if button_filter.is_admin(visitor) and button_filter.is_moder(visitor):
-            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало")
+            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало", reply_markup=get_client_keyboard())
 
     await bot.send_message(call.from_user.id, "Кнопка была удалена")
     await state.finish()
@@ -172,7 +172,7 @@ async def button_add(call : types.CallbackQuery, callback_data: dict, state : FS
     visitors = await sql_worker.get_all_state_visitors_id()
     for visitor in visitors:
         if button_filter.is_admin(visitor) and button_filter.is_moder(visitor):
-            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало")
+            await bot.send_message(visitor[0], "Панель кнопок была обновлена администратором\n приносим извинения, если это сообщение вам помешало", reply_markup=get_client_keyboard())
 
 
     await bot.send_message(call.from_user.id, "Кнопка успешно добавлена")
