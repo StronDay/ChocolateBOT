@@ -1,10 +1,9 @@
 import sqlite3 as sql
 import datetime
-import tracemalloc
 
-from create_bot import bot
+import create_bot
 from datetime import timedelta
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from services import yaml_worker
 from keyboards import training_choise_keyboard
 
@@ -206,7 +205,7 @@ async def check_remaining_time():
                     minutes = (period.seconds % 3600) // 60
                     seconds = period.seconds % 60
 
-                    await bot.send_message(user[0], f"До конца текущей тренировки осталось\nЧасов: {hours} | Минут: {minutes} | Секунд: {seconds}", reply_markup = training_choise_keyboard)
+                    await create_bot.bot.send_message(user[0], f"До конца текущей тренировки осталось\nЧасов: {hours} | Минут: {minutes} | Секунд: {seconds}", reply_markup = training_choise_keyboard)
 
 def sql_close():
     data_base.close()
