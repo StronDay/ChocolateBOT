@@ -42,7 +42,7 @@ async def on_startup(dp):
     print("[INFO] Бот вышел в онлайн")
 
 async def on_shutdown(dp):
-    await admin_malling("[STOP] Колясик решил отдохнуть :( ...)")
+    await admin_malling("[STOP] Колясик решил отдохнуть :( ...")
     print("[INFO] Бот выключился")
     sql_worker.sql_close()
     await bot.delete_webhook()
